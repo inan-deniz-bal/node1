@@ -2,6 +2,22 @@ const mongoose = require("mongoose");
 const express = require("express");
 const Customer = require("./models/customerModel");
 const Card = require("./models/cardModel");
+const pastOrderRouter = require("./routes/pastOrderRouter");
+
+
+const app = express();
+app.use(morgan("dev"));
+app.use(express.json());
+app.use(cors());
+
+//routes
+
+app.use("/pastOrders", pastOrderRouter);
+app.listen(3000, () => {
+  console.log("Server is running on port 3000");
+});
+
+
 
 mongoose
   .connect(
@@ -14,6 +30,7 @@ mongoose
     console.log("Failed to connect to MongoDB", err);
   });
 
+  
 // Kartı ve müşteriyi aynı anda kaydetmek için async/await kullanabilirsiniz
 const createCustomerWithCard = async () => {
   try {
