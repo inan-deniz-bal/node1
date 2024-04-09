@@ -26,7 +26,7 @@ const createCustomerWithCard = async () => {
         year: "2022",
       },
     });
-    const card2= new Card({
+    const card2 = new Card({
       cardNo: "1234567890",
       cardHolder: "John Doe",
       cvv: "123",
@@ -35,13 +35,12 @@ const createCustomerWithCard = async () => {
         year: "2022",
       },
     });
-    
 
     const customer = new Customer({
       name: "John Doe",
       email: "",
       password: "password",
-      cardInfo: [card1._id, card2._id] // Kartın ObjectId'sini atıyoruz
+      cardInfo: [card1._id, card2._id], // Kartın ObjectId'sini atıyoruz
     });
 
     card1.save();
@@ -52,5 +51,3 @@ const createCustomerWithCard = async () => {
     console.error("Failed to create customer with card:", error);
   }
 };
-
-
