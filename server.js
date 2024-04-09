@@ -1,8 +1,14 @@
 const mongoose = require("mongoose");
 const express = require("express");
+const morgan = require("morgan");
+const cors = require("cors");
+
 const Customer = require("./models/customerModel");
 const Card = require("./models/cardModel");
 const pastOrderRouter = require("./routes/pastOrderRouter");
+const customerRouter = require("./routes/customerRouter");
+
+
 
 
 const app = express();
@@ -11,8 +17,10 @@ app.use(express.json());
 app.use(cors());
 
 //routes
+app.use("/api/v1/pastOrders", pastOrderRouter);
+app.use("/api/v1/customers",customerRouter);
 
-app.use("/pastOrders", pastOrderRouter);
+
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });

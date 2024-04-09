@@ -1,21 +1,32 @@
 const Order = require("../models/orderModel");
 const Customer = require("../models/customerModel");
+const mongoose = require("mongoose");
 
 exports.allUserOrders = async (req, res) => {
   try {
+    console.log(req.body);
     const userID = await req.body.userID;
-    const userExist = await Customer.findById(userID);
-    if (userExist) {
-      const userOrders = await Order.find({ customerId: userID });
+
+    if (!mongoose.Types.ObjectId.isValid(userID)) {
+      return res.status(400).json({
+        status: "failed",
+        message: "Invalid user ID",
+      });
+    }
+
+    const userOrders = await Order.find({ customerId: userID });
+    if (userOrders.length === 0) {
+      console.log("buradayım");
       res.json({
-        status: success,
-        length: userOrders.length,
-        data: userOrders,
+        status: "failed",
+        message: "User has no orders",
       });
     } else {
+      console.log("olumsuz1");
       res.json({
-        status: failed,
-        message: "User not found",
+        status: "success",
+        length: userOrders.length,
+        data: userOrders,
       });
     }
 

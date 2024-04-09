@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const pastOrdersController = require("../controllers/pastOrdersController");
 
-router.route("/").get(pastOrdersController.allOrders);
+router.route("/").post(pastOrdersController.allUserOrders);
 /*.delete(pastOrdersController.deleteAllOrders)
 .post(pastOrdersController.allUserOrders);
 
