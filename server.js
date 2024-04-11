@@ -7,6 +7,7 @@ const Customer = require("./models/customerModel");
 const Card = require("./models/cardModel");
 const pastOrderRouter = require("./routes/pastOrderRouter");
 const customerRouter = require("./routes/customerRouter");
+const currentOrderRouter = require("./routes/currentOrderRouter");
 
 
 
@@ -19,6 +20,7 @@ app.use(cors());
 //routes
 app.use("/api/v1/pastOrders", pastOrderRouter);
 app.use("/api/v1/customers",customerRouter);
+app.use('/api/v1/currentOrders',currentOrderRouter);  
 
 
 app.listen(3000, () => {

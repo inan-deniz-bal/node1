@@ -3,6 +3,10 @@ const router = express.Router();
 const pastOrdersController = require("../controllers/pastOrdersController");
 
 router.route("/").post(pastOrdersController.allUserOrders);
+router.route("/:id").get(pastOrdersController.getUserOrders);
+
+//router.route("/create").post(pastOrdersController.createPastOrder);
+
 /*.delete(pastOrdersController.deleteAllOrders)
 .post(pastOrdersController.allUserOrders);
 

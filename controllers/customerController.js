@@ -27,3 +27,16 @@ exports.allUsers = async (req, res) => {
     }
     }
 
+exports.getCustomer = async (req, res) => {
+    try {
+        const user = await Customer.findById(req.params.id);
+        res.json({
+        status: "success",
+        data: user,
+        });
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+    }
+
+
