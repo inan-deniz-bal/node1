@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
 const Menu = require("./menuModel");
 const Staff = require("./staffModel");
+const Table = require("./tableModel");
 
 constRestaurantSchema = new mongoose.Schema({
   name: String,
-  tableList: [String],
+  tableList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Table" }],
   totalCapacity: Number,
   customerCount: Number,
   staffList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Staff" }],
