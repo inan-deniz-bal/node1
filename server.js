@@ -31,7 +31,8 @@ app.listen(3000, () => {
 
 mongoose
   .connect(
-    "mongodb+srv://idb:lGZfzsmEAIj3RMTN@cluster0.6xaa8gm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+    //"mongodb+srv://idb:lGZfzsmEAIj3RMTN@cluster0.6xaa8gm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+    "mongodb+srv://user2:user2.idb@cluster0.6xaa8gm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
   )
   .then(() => {
     console.log("Connected to MongoDB");
