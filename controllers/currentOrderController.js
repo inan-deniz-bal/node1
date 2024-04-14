@@ -9,14 +9,14 @@ exports.createCurrentOrder = async (req, res) => {
 
     const order = req.body;
     if (!mongoose.Types.ObjectId.isValid(order.customerId)) {
-      res
+      return res
         .status(400)
         .json({ status: "failed", message: "Invalid customer ID" });
     } //console.log(req.body)
 
     const newOrder = new CurrentOrder(req.body);
     await newOrder.save();
-    res.status(201).json({
+    return res.status(201).json({
       status: "success",
       data: newOrder,
     });
@@ -48,7 +48,7 @@ exports.closeOrder = async (req, res) => {
         orders: [order],
       });
       await newPastOrder.save();
-      res.status(201).json({
+      return res.status(201).json({
         status: "success",
         data: newPastOrder,
       });
@@ -143,7 +143,7 @@ exports.updateOrder = async (req, res) => {
 //yasaklı teknik
 exports.deleteAllOrders = async (req, res) => {
   try {
-    console.log("bassana amk")
+    console.log("bassana amk");
     await CurrentOrder.deleteMany();
     res.status(200).json({
       status: "success",
