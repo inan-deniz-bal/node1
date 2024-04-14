@@ -3,29 +3,16 @@ const Customer = require("../models/customerModel");
 const pastOrders = require("../models/pastOrders");
 const CurrentOrder = require("../models/currentOrder");
 
-/*
-const checkUser = async (req, res, next) => {
-  try {
-    const { customerId } = req.body.customerId;
-    if (!mongoose.Types.ObjectId.isValid(user)) {
-      return res.status(400).json({
-        status: "failed",
-        message: "Invalid user ID",
-      });
-    }
-    next();
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};*/
-
 exports.createCurrentOrder = async (req, res) => {
   try {
-    //checkUser();
     console.log("merhaba");
 
     const order = req.body;
-    //console.log(req.body)
+    if (!mongoose.Types.ObjectId.isValid(order.customerId)) {
+      res
+        .status(400)
+        .json({ status: "failed", message: "Invalid customer ID" });
+    } //console.log(req.body)
 
     const newOrder = new CurrentOrder(req.body);
     await newOrder.save();
@@ -50,10 +37,11 @@ exports.closeOrder = async (req, res) => {
     order.orderStatus = "closed";
     await order.save();
 
-
     //checkUser();
 
-    const pastOrder = await pastOrders.findOne({ customerId: order.customerId });
+    const pastOrder = await pastOrders
+      .findOne({ customerId: order.customerId })
+      .populate("orders");
     if (!pastOrder) {
       const newPastOrder = new pastOrders({
         customerId: order.customerId,
@@ -64,6 +52,15 @@ exports.closeOrder = async (req, res) => {
         status: "success",
         data: newPastOrder,
       });
+    }
+    const theOrderExists = pastOrder.orders.some(
+      (order) => order._id.toString() === orderID.toString()
+    );
+
+    if (theOrderExists) {
+      return res
+        .status(400)
+        .json({ status: "failed", message: "Order already exists" });
     }
 
     pastOrder.orders.push(order);
@@ -88,5 +85,70 @@ exports.allOrders = async (req, res) => {
     });
   } catch (error) {
     res.status(404).json({ message: error.message });
+  }
+};
+
+exports.cancelOrder = async (req, res) => {
+  try {
+    const orderID = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(orderID)) {
+      return res
+        .status(400)
+        .json({ status: "failed", message: "Invalid order ID" });
+    }
+    await CurrentOrder.findByIdAndDelete(orderID);
+
+    res.status(204).json({
+      status: "success",
+      data: null,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.updateOrder = async (req, res) => {
+  //5 dakika kuralı eklenecek
+  try {
+    const orderID = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(orderID)) {
+      return res
+        .status(400)
+        .json({ status: "failed", message: "Invalid order ID" });
+    }
+    const order = await CurrentOrder.findById(orderID);
+    if (order.orderStatus === "closed") {
+      return res
+        .status(400)
+        .json({ status: "failed", message: "Order is closed" });
+    }
+    console.log(req.body);
+    const updatedOrder = await CurrentOrder.findByIdAndUpdate(
+      orderID,
+      req.body,
+      {
+        new: true,
+      }
+    );
+    updatedOrder.save();
+    res.status(200).json({
+      status: "success",
+      data: updatedOrder,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//yasaklı teknik
+exports.deleteAllOrders = async (req, res) => {
+  try {
+    console.log("bassana amk")
+    await CurrentOrder.deleteMany();
+    res.status(200).json({
+      status: "success",
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
