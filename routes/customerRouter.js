@@ -7,4 +7,5 @@ router.route("/").post(customerController.createUser).get(customerController.all
 router.route("/:id").get(customerController.getCustomer);
 
 router.route("/login").post(customerController.login);
+
 module.exports = router;

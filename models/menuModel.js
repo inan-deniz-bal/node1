@@ -1,12 +1,14 @@
 const mongoose = require("mongoose");
-const Meal = require("./mealModel");
+//const Meal = require("./mealModel");
 
 const menuSchema = new mongoose.Schema({
   mealType: String,
   mealList: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Meal",
+      mealName: String,
+      mealPrice: Number,
+      mealCount: Number,
+      ingridients: [String],
     },
   ],
 });

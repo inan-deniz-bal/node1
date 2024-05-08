@@ -2,7 +2,7 @@ const Order = require("../models/currentOrder");
 const PastOrder = require("../models/pastOrders");
 const Customer = require("../models/customerModel");
 const mongoose = require("mongoose");
-
+/*
 exports.allUserOrders = async (req, res) => {
   try {
     console.log(req.body);
@@ -36,12 +36,12 @@ exports.allUserOrders = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
-
+*/
 exports.getUserOrders = async (req, res) => {
   try {
     const userID = req.params.id;
     if (!mongoose.Types.ObjectId.isValid(userID)) {
-      return res.status(400).json({
+      return res.status(401).json({
         status: "failed",
         message: "Invalid user ID",
       });
@@ -67,6 +67,15 @@ exports.getUserOrders = async (req, res) => {
   }
 };
 
+exports.allPastOrders=async(req,res)=>{
+  try{
+    const pastOrders = await PastOrder.find().populate("orders"); // populate fonksiyonu "orders" alanı üzerinde çağrıldı
+    res.status(200).json(pastOrders);
+  }
+  catch(error){
+    res.status(404).json({message:error.message});
+  }
+}
 /*
 exports.createPastOrder=async(req,res)=>{
   try{

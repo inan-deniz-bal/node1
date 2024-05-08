@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const pastOrdersController = require("../controllers/pastOrdersController");
 
-router.route("/").post(pastOrdersController.allUserOrders);
+router.route("/").get(pastOrdersController.allPastOrders);
 router.route("/:id").get(pastOrdersController.getUserOrders);
 
 //router.route("/create").post(pastOrdersController.createPastOrder);

@@ -5,7 +5,7 @@ const tableSchema = new mongoose.Schema({
   tableName: String,
   status: String,
   currentOrder: { type: mongoose.Schema.Types.ObjectId, ref: "CurrentOrder" },
-  customerId: mongoose.Schema.Types.ObjectId,
+  customerId: {type:mongoose.Schema.Types.ObjectId,ref:"Customer"},
 });
 
 module.exports = mongoose.model("Table", tableSchema);
