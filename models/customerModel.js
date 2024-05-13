@@ -18,5 +18,6 @@ const customerSchema = new mongoose.Schema({
       ref: "PastOrder",
     },
   ],
+  isOrdered: Boolean,
 });
 module.exports = mongoose.model("Customer", customerSchema);

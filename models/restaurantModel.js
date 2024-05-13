@@ -21,6 +21,7 @@ const RestaurantSchema = new mongoose.Schema({
   customerCount: Number,
   staffList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Staff" }],
   address: String,
+  features: [String],
   //menu: [{ type: mongoose.Schema.Types.ObjectId, ref: "Menu" }],
   menu: [
     {

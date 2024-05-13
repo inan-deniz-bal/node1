@@ -10,4 +10,6 @@ router
   .delete(restaurantController.deleteAllRestaurants);
 router.route("/:id").get(restaurantController.getRestaurant);
 
+router.route("/tables/:id").get(restaurantController.getRestaurantTables);
+
 module.exports = router;
