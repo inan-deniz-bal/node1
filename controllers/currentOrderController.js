@@ -143,7 +143,6 @@ exports.updateOrder = async (req, res) => {
 //yasaklı teknik
 exports.deleteAllOrders = async (req, res) => {
   try {
-    console.log("bassana amk");
     await CurrentOrder.deleteMany();
     res.status(200).json({
       status: "success",

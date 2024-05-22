@@ -9,6 +9,7 @@ const pastOrderRouter = require("./routes/pastOrderRouter");
 const customerRouter = require("./routes/customerRouter");
 const currentOrderRouter = require("./routes/currentOrderRouter");
 const restaurantRouter = require("./routes/restaurantRouter");
+const cardRouter=require("./routes/cardRouter");
 
 
 
@@ -23,6 +24,7 @@ app.use("/api/v1/pastOrders", pastOrderRouter);
 app.use("/api/v1/customers",customerRouter);
 app.use('/api/v1/currentOrders',currentOrderRouter);  
 app.use('/api/v1/restaurants',restaurantRouter);
+app.use('/api/v1/cards/',cardRouter);
 
 
 app.listen(3000, () => {
