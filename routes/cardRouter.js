@@ -9,6 +9,8 @@ router
   .post(cardController.createCard)
   .delete(cardController.removeAllCards);
 
+router.route("/:customerId/:cardId").delete(cardController.deleteCustomerCard);
+
 router
   .route("/:id")
   .get(cardController.getCustomerCards)

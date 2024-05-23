@@ -82,6 +82,26 @@ exports.removeCustomerCard = async (req, res) => {
   }
 };
 
+exports.deleteCustomerCard = async (req, res) => {
+  try {
+    const {customerId, cardId}= req.params;
+    console.log(customerId, cardId)
+    if (!mongoose.Types.ObjectId.isValid(customerId)) {
+      return res
+        .status(400)
+        .json({ status: "failed", message: "Invalid customer ID" });
+    }
+    const card = await Card.findOneAndDelete({ customerId: customerId, _id: cardId});
+    console.log(card)
+    return res.json({
+      status: "success",
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 exports.removeAllCards = async (req, res) => {
   try {
     await Card.deleteMany();
