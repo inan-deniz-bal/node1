@@ -65,6 +65,7 @@ exports.login = async (req, res) => {
           data: {
             email: user.email,
             userid: user._id,
+            userType:user.userType
           },
         });
         return;

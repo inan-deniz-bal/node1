@@ -19,5 +19,6 @@ const customerSchema = new mongoose.Schema({
     },
   ],
   isOrdered: Boolean,
+  userType:String
 });
 module.exports = mongoose.model("Customer", customerSchema);
