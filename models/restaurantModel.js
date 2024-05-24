@@ -6,7 +6,7 @@ const Customer = require("./customerModel");
 const RestaurantSchema = new mongoose.Schema({
   name: String,
   //tableList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Table" }],
-  tableList: [
+  /*tableList: [
     {
       tableName: String,
       status: String,
@@ -16,7 +16,8 @@ const RestaurantSchema = new mongoose.Schema({
       },
       customerId: { type: mongoose.Schema.Types.ObjectId, ref: "Customer" },
     },
-  ],
+  ], */
+  tableList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Table" }],
   totalCapacity: Number,
   customerCount: Number,
   staffList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Staff" }],

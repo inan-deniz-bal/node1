@@ -1,7 +1,9 @@
 const mongoose = require("mongoose");
+const table=require("./tableModel");
 
 const currentOrderSchema = new mongoose.Schema({
   customerId: mongoose.Schema.Types.ObjectId,
+  tableId: mongoose.Schema.Types.ObjectId,
   restaurantName: String,
   date: Date,
   totalPrice: Number,

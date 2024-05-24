@@ -3,9 +3,17 @@ const currentOrder = require("./currentOrder");
 
 const tableSchema = new mongoose.Schema({
   tableName: String,
-  status: String,
-  currentOrder: { type: mongoose.Schema.Types.ObjectId, ref: "CurrentOrder" },
-  customerId: {type:mongoose.Schema.Types.ObjectId,ref:"Customer"},
+  orders: [
+    {
+      date: Date,
+      currentOrder: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "CurrentOrder",
+      },
+      customerId: { type: mongoose.Schema.Types.ObjectId, ref: "Customer" },
+      status: String,
+    },
+  ],
 });
 
 module.exports = mongoose.model("Table", tableSchema);

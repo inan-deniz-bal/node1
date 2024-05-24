@@ -9,10 +9,8 @@ const pastOrderRouter = require("./routes/pastOrderRouter");
 const customerRouter = require("./routes/customerRouter");
 const currentOrderRouter = require("./routes/currentOrderRouter");
 const restaurantRouter = require("./routes/restaurantRouter");
-const cardRouter=require("./routes/cardRouter");
-
-
-
+const cardRouter = require("./routes/cardRouter");
+const tableRouter = require("./routes/tableRouter");
 
 const app = express();
 app.use(morgan("dev"));
@@ -21,17 +19,15 @@ app.use(cors());
 
 //routes
 app.use("/api/v1/pastOrders", pastOrderRouter);
-app.use("/api/v1/customers",customerRouter);
-app.use('/api/v1/currentOrders',currentOrderRouter);  
-app.use('/api/v1/restaurants',restaurantRouter);
-app.use('/api/v1/cards/',cardRouter);
-
+app.use("/api/v1/customers", customerRouter);
+app.use("/api/v1/currentOrders", currentOrderRouter);
+app.use("/api/v1/restaurants", restaurantRouter);
+app.use("/api/v1/cards/", cardRouter);
+app.use("/api/v1/tables", tableRouter);
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
 });
-
-
 
 mongoose
   .connect(
@@ -45,7 +41,6 @@ mongoose
     console.log("Failed to connect to MongoDB", err);
   });
 
-  
 // Kartı ve müşteriyi aynı anda kaydetmek için async/await kullanabilirsiniz
 const createCustomerWithCard = async () => {
   try {

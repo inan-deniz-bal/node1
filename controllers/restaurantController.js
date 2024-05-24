@@ -3,7 +3,7 @@ const Restourant = require("../models/restaurantModel");
 
 exports.getAllRestaurants = async (req, res) => {
   try {
-    const restaurants = await Restourant.find();
+    const restaurants = await Restourant.find().populate("tableList");
     if (restaurants.length != 0) {
       return res.status(200).json({
         status: "success",
