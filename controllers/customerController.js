@@ -3,12 +3,12 @@ const Customer = require("../models/customerModel");
 exports.createUser = async (req, res) => {
   try {
     const response = req.body;
-    const mail=response.email;
+    const email=response.email;
     console.log(response);
-    console.log(mail);
-    const isUserNew = await Customer.find({email:mail});
-    console.log(isUserNew);
-    if (isUserNew) {
+    console.log(email);
+    const isUserNew = await Customer.find({email});
+    console.log("user",isUserNew);
+    if (isUserNew.length!==0) {
       return res.status(401).json({
         status: "failed",
         message: "User already exists",
