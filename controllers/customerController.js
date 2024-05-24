@@ -2,25 +2,29 @@ const Customer = require("../models/customerModel");
 
 exports.createUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-    const isUserNew = await Customer.findOne({ email });
+    const response = req.body;
+    const mail=response.email;
+    console.log(response);
+    console.log(mail);
+    const isUserNew = await Customer.find({email:mail});
     console.log(isUserNew);
     if (isUserNew) {
-      res.status(401).json({
+      return res.status(401).json({
         status: "failed",
         message: "User already exists",
       });
-      return;
+ 
     }
-    const newUser = await Customer.create({ name, email, password });
-    res.status(201).json({
+    const newUser = await Customer.create( response );
+    console.log(newUser)
+    return res.status(201).json({
       status: "success",
       data: {
         email: newUser.email,
         userid: newUser._id,
       },
     });
-    return;
+
   } catch (error) {
     res.status(400).json({
       status: "failed",
