@@ -2,20 +2,85 @@ const mongoose = require("mongoose");
 const Customer = require("../models/customerModel");
 const pastOrders = require("../models/pastOrders");
 const CurrentOrder = require("../models/currentOrder");
+const Table = require("../models/tableModel");
 
 exports.createCurrentOrder = async (req, res) => {
   try {
     console.log("merhaba");
+    const now = new Date();
+    const offset = 3 * 60; // GMT+3 saat dilimi için ofset (dakika cinsinden)
+    
+    // GMT+3 zaman diliminde saat al
+    const gmt3Date = new Date(now.getTime() + offset * 60 * 1000);;
+
+
+    console.log("gmt3Date", gmt3Date)
+    const orderDate=new Date(req.body.date);
 
     const order = req.body;
+    //console.log("sipariş", order)
+    console.log("data date", order.date);
     if (!mongoose.Types.ObjectId.isValid(order.customerId)) {
       return res
         .status(400)
         .json({ status: "failed", message: "Invalid customer ID" });
-    } //console.log(req.body)
+    } //)
 
     const newOrder = new CurrentOrder(req.body);
+    //console.log("yeni sipariş", newOrder);
+
+    const table = await Table.findById(newOrder.tableId);
+    //console.log("masa", table)
+
+    if (!table) {
+      return res.status(400).json({
+        status: "failed",
+        message: "Table not found",
+      });
+    }
+
+  
+    if (gmt3Date- orderDate >= 10000) {
+      console.log("geçmiş zamanlı sipariş")
+      return res.status(400).json({
+        status: "failed",
+        message: "Geçmiş zamanlı sipariş veremezsiniz!",
+      });
+    }
+    if(table.orders.length===0){
+      await newOrder.save();
+      table.orders.push({
+        date: gmt3Date,
+        currentOrder: newOrder._id,
+        customerId: newOrder.customerId,
+        status: "occupied",
+      });
+      await table.save();
+      return res.status(201).json({
+        status: "success",
+        data: newOrder,
+      });
+    }
+    this.table.orders.forEach((order) => {
+      if (order.status === "occupied") {
+        if (Math.abs(order.date - reqDate) <= 3600000) {
+          return res.status(400).json({
+            status: "failed",
+            message: "Masa rezerve edilmiş!",
+          });
+        }
+      }
+    });
+
     await newOrder.save();
+    table.orders.push({
+      date: reqDate,
+      currentOrder: newOrder._id,
+      customerId: newOrder.customerId,
+      status: "occupied",
+    });
+    await table.save();
+
     return res.status(201).json({
       status: "success",
       data: newOrder,

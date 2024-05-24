@@ -131,7 +131,7 @@ exports.getRestaurantTables = async (req, res) => {
 exports.getTableByQrCode = async (req, res) => {
   try {
     const tableid = req.params.id;
-    const date = Date.now;
+    const date = Date.now();
     const table = await Table.findById(tableid);
     console.log("table", table);
 
@@ -159,7 +159,7 @@ exports.getTableByQrCode = async (req, res) => {
         },
       });
     }
-    if (Math.abs(currentOrder.date - date) >= 3600000) {
+    if (Math.abs(new Date(currentOrder.date) - date) >= 3600000) {
       const restaurant = await Restaurant.findOne({
         tableList: tableid,
       });
