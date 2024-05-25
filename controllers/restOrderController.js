@@ -45,6 +45,7 @@ exports.cancelOrder = async (req, res) => {
   try {
     const { id } = req.params;
     const tableId=req.body.tableId;
+    console.log(tableId)
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res
         .status(400)
