@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const currentOrderController = require("../controllers/currentOrderController");
+router.route("/active").get(currentOrderController.allActiveOrders);
 
 router
   .route("/")

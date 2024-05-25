@@ -234,3 +234,17 @@ exports.deleteAllOrders = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.allActiveOrders = async (req, res) => {
+  try {
+    const orders = await CurrentOrder.find({ orderStatus: "active" });
+    res.json({
+      status: "success",
+      length: orders.length,
+      data: orders,
+    });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+}
+
