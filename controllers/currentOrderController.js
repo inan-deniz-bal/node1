@@ -9,13 +9,12 @@ exports.createCurrentOrder = async (req, res) => {
     console.log("merhaba");
     const now = new Date();
     const offset = 3 * 60; // GMT+3 saat dilimi için ofset (dakika cinsinden)
-    
+
     // GMT+3 zaman diliminde saat al
-    const gmt3Date = new Date(now.getTime() + offset * 60 * 1000);;
+    const gmt3Date = new Date(now.getTime() + offset * 60 * 1000);
 
-
-    console.log("gmt3Date", gmt3Date)
-    const orderDate=new Date(req.body.date);
+    console.log("gmt3Date", gmt3Date);
+    const orderDate = new Date(req.body.date);
 
     const order = req.body;
     //console.log("sipariş", order)
@@ -39,18 +38,17 @@ exports.createCurrentOrder = async (req, res) => {
       });
     }
 
-  
-    if (gmt3Date- orderDate >= 10000) {
-      console.log("geçmiş zamanlı sipariş")
+    if (gmt3Date - orderDate >= 10000) {
+      console.log("geçmiş zamanlı sipariş");
       return res.status(400).json({
         status: "failed",
         message: "Geçmiş zamanlı sipariş veremezsiniz!",
       });
     }
-    if(table.orders.length===0){
+    if (table.orders.length === 0) {
       await newOrder.save();
       table.orders.push({
-        date: gmt3Date,
+        date: orderDate,
         currentOrder: newOrder._id,
         customerId: newOrder.customerId,
         status: "occupied",
@@ -61,9 +59,10 @@ exports.createCurrentOrder = async (req, res) => {
         data: newOrder,
       });
     }
-    this.table.orders.forEach((order) => {
+    console.log("masa siparişi", table.orders);
+    table.orders.forEach((order) => {
       if (order.status === "occupied") {
-        if (Math.abs(order.date - reqDate) <= 3600000) {
+        if (Math.abs(orderDate - gmt3Date) <= 3600000) {
           return res.status(400).json({
             status: "failed",
             message: "Masa rezerve edilmiş!",
@@ -74,7 +73,7 @@ exports.createCurrentOrder = async (req, res) => {
 
     await newOrder.save();
     table.orders.push({
-      date: reqDate,
+      date: orderDate,
       currentOrder: newOrder._id,
       customerId: newOrder.customerId,
       status: "occupied",
@@ -92,17 +91,36 @@ exports.createCurrentOrder = async (req, res) => {
 
 exports.closeOrder = async (req, res) => {
   try {
-    const orderID = req.params.id;
+    const { orderID, tableId } = req.params;
+    console.log("orderID", orderID, "tableId", tableId);
     if (!mongoose.Types.ObjectId.isValid(orderID)) {
       return res
         .status(400)
         .json({ status: "failed", message: "Invalid order ID" });
     }
+    if (!mongoose.Types.ObjectId.isValid(tableId)) {
+      return res
+        .status(400)
+        .json({ status: "failed", message: "Invalid table ID" });
+    }
+    const table = await Table.findById(tableId).populate("orders");
+
+    newOrders = [];
+    if (table.orders.length !== 0) {
+      table.orders.forEach((order) => {
+        console.log("currentorder", order.currentOrder._id.toString(), orderID)
+        if (order.currentOrder._id.toString() !== orderID) {
+          newOrders.push(order);
+        }
+      });
+      table.orders = newOrders;
+      await table.save();
+    }
+
+    console.log("masa2", table);
     const order = await CurrentOrder.findById(orderID);
     order.orderStatus = "closed";
     await order.save();
-
-    //checkUser();
 
     const pastOrder = await pastOrders
       .findOne({ customerId: order.customerId })
