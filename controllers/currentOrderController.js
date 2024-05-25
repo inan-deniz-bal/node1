@@ -271,3 +271,21 @@ exports.getCustomerOrders = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
+
+exports.getCurrentOrder = async (req, res) => {
+  try {
+    const orderID = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(orderID)) {
+      return res
+        .status(400)
+        .json({ status: "failed", message: "Invalid order ID" });
+    }
+    const order = await CurrentOrder.findById(orderID);
+    res.json({
+      status: "success",
+      data: order,
+    });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};

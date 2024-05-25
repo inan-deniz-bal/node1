@@ -15,4 +15,7 @@ router
   .get(currentOrderController.closeOrder)
   .delete(currentOrderController.cancelOrder)
   .put(currentOrderController.updateOrder);
+
+
+router.route("/:id").get(currentOrderController.getCurrentOrder);
 module.exports = router;
