@@ -3,6 +3,7 @@ const Customer = require("../models/customerModel");
 const pastOrders = require("../models/pastOrders");
 const CurrentOrder = require("../models/currentOrder");
 const Table = require("../models/tableModel");
+const Restaurant = require("../models/restaurantModel");
 
 exports.createCurrentOrder = async (req, res) => {
   try {
@@ -14,8 +15,7 @@ exports.createCurrentOrder = async (req, res) => {
     const gmt3Date = new Date(now.getTime() + offset * 60 * 1000);
 
     console.log("gmt3Date", gmt3Date);
-    const orderDate = req.body.date
- 
+    const orderDate = req.body.date;
 
     const order = req.body;
     console.log("sipariş", order);
@@ -289,3 +289,5 @@ exports.getCurrentOrder = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
+
+
