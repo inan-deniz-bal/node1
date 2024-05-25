@@ -14,11 +14,13 @@ exports.createCurrentOrder = async (req, res) => {
     const gmt3Date = new Date(now.getTime() + offset * 60 * 1000);
 
     console.log("gmt3Date", gmt3Date);
-    const orderDate = new Date(req.body.date);
+    const orderDate = req.body.date
+ 
 
     const order = req.body;
+    console.log("sipariş", order);
     //console.log("sipariş", order)
-    console.log("data date", order.date);
+    console.log("sipariş tarihi", orderDate);
     if (!mongoose.Types.ObjectId.isValid(order.customerId)) {
       return res
         .status(400)
@@ -108,7 +110,7 @@ exports.closeOrder = async (req, res) => {
     newOrders = [];
     if (table.orders.length !== 0) {
       table.orders.forEach((order) => {
-        console.log("currentorder", order.currentOrder._id.toString(), orderID)
+        console.log("currentorder", order.currentOrder._id.toString(), orderID);
         if (order.currentOrder._id.toString() !== orderID) {
           newOrders.push(order);
         }
@@ -246,5 +248,26 @@ exports.allActiveOrders = async (req, res) => {
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
-}
+};
 
+exports.getCustomerOrders = async (req, res) => {
+  try {
+    const customerID = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(customerID)) {
+      return res
+        .status(400)
+        .json({ status: "failed", message: "Invalid customer ID" });
+    }
+    const orders = await CurrentOrder.find({
+      customerId: customerID,
+      orderStatus: !"closed",
+    });
+    res.json({
+      status: "success",
+      length: orders.length,
+      data: orders,
+    });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};

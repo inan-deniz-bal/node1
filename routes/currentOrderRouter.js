@@ -9,6 +9,7 @@ router
   .get(currentOrderController.allOrders)
   .delete(currentOrderController.deleteAllOrders);
 
+router.route("/customer/:id").get(currentOrderController.getCustomerOrders);
 router
   .route("/:orderID/:tableId")
   .get(currentOrderController.closeOrder)
