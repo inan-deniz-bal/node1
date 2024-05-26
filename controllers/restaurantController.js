@@ -1,10 +1,36 @@
 const mongoose = require("mongoose");
-const Restourant = require("../models/restaurantModel");
+const Restaurant = require("../models/restaurantModel");
+const Table = require("../models/tableModel");
+
+const updateRestaurantCapacity = async (restaurantID) => {
+  const restaurant = await Restaurant.findById(restaurantID).populate("tableList");
+  if (!restaurant) {
+    throw new Error("Restaurant not found");
+  }
+
+  const totalCapacity = restaurant.tableList.length;
+  let customerCount = 0;
+
+  for (const table of restaurant.tableList) {
+    const activeOrders = await Table.findById(table._id).populate("orders.currentOrder").where("orders.status").ne("completed");
+    if (activeOrders.orders.length > 0) {
+      customerCount += activeOrders.orders.reduce((count, order) => count + (order.status !== "completed" ? 1 : 0), 0);
+    }
+  }
+
+  restaurant.totalCapacity = totalCapacity;
+  restaurant.customerCount = customerCount;
+  await restaurant.save();
+  console.log("güncellenen restoran", restaurant);
+};
 
 exports.getAllRestaurants = async (req, res) => {
   try {
-    const restaurants = await Restourant.find().populate("tableList");
-    if (restaurants.length != 0) {
+    const restaurants = await Restaurant.find().populate("tableList");
+    if (restaurants.length !== 0) {
+      for (const restaurant of restaurants) {
+        await updateRestaurantCapacity(restaurant._id);
+      }
       return res.status(200).json({
         status: "success",
         data: restaurants,
@@ -27,7 +53,7 @@ exports.getRestaurant = async (req, res) => {
         message: "Invalid restaurant ID",
       });
     }
-    const restaurant = await Restourant.findById(id);
+    const restaurant = await Restaurant.findById(id);
     if (restaurant.length === 0) {
       return res.status(404).json({
         status: "failed",
@@ -46,7 +72,7 @@ exports.createRestaurant = async (req, res) => {
   try {
     const restaurant = req.body;
     console.log(restaurant);
-    const newRestaurant = await Restourant.create(restaurant);
+    const newRestaurant = await Restaurant.create(restaurant);
     res.status(201).json({
       status: "success",
       data: newRestaurant,
@@ -65,7 +91,7 @@ exports.updateRestaurant = async (req, res) => {
         message: "Invalid restaurant ID",
       });
     }
-    const updatedRestaurant = await Restourant.findByIdAndUpdate(
+    const updatedRestaurant = await Restaurant.findByIdAndUpdate(
       id,
       { ...restaurant, _id: id },
       { new: true }
@@ -87,7 +113,7 @@ exports.deleteRestaurant = async (req, res) => {
         message: "Invalid restaurant ID",
       });
     }
-    await Restourant.findByIdAndRemove(id);
+    await Restaurant.findByIdAndRemove(id);
     res.status(200).json({
       status: "success",
       message: "Restaurant deleted successfully",
@@ -105,7 +131,7 @@ exports.getRestaurantMenu = async (req, res) => {
         message: "Invalid restaurant ID",
       });
     }
-    const restaurant = await Restourant.findById(id).populate("menu");
+    const restaurant = await Restaurant.findById(id).populate("menu");
     if (!restaurant) {
       return res.status(404).json({
         status: "failed",
@@ -129,7 +155,7 @@ exports.getRestaurantStaff = async (req, res) => {
         message: "Invalid restaurant ID",
       });
     }
-    const restaurant = await Restourant.findById(id).populate("staffList");
+    const restaurant = await Restaurant.findById(id).populate("staffList");
     if (!restaurant) {
       return res.status(404).json({
         status: "failed",
@@ -153,7 +179,7 @@ exports.getRestaurantTables = async (req, res) => {
         message: "Invalid restaurant ID",
       });
     }
-    const restaurant = await Restourant.findById(id).populate("tableList");
+    const restaurant = await Restaurant.findById(id).populate("tableList");
     if (!restaurant) {
       return res.status(404).json({
         status: "failed",
@@ -177,7 +203,7 @@ exports.getRestaurantOrders = async (req, res) => {
         message: "Invalid restaurant ID",
       });
     }
-    const restaurant = await Restourant.findById(id).populate("orders");
+    const restaurant = await Restaurant.findById(id).populate("orders");
     if (!restaurant) {
       return res.status(404).json({
         status: "failed",
@@ -195,7 +221,7 @@ exports.getRestaurantOrders = async (req, res) => {
 
 exports.deleteAllRestaurants = async (req, res) => {
   try {
-    await Restourant.deleteMany();
+    await Restaurant.deleteMany();
     res.status(200).json({
       status: "success",
       message: "All restaurants deleted successfully",
