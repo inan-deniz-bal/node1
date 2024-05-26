@@ -12,6 +12,7 @@ const restaurantRouter = require("./routes/restaurantRouter");
 const cardRouter = require("./routes/cardRouter");
 const tableRouter = require("./routes/tableRouter");
 const restOrderRouter = require("./routes/restOrderRouter");
+const tempOrderRouter = require("./routes/tempOrderRouter");
 
 const app = express();
 app.use(morgan("dev"));
@@ -26,6 +27,7 @@ app.use("/api/v1/restaurants", restaurantRouter);
 app.use("/api/v1/cards/", cardRouter);
 app.use("/api/v1/tables", tableRouter);
 app.use("/api/v1/rest", restOrderRouter);
+app.use("/api/v1/tempOrders", tempOrderRouter);
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
