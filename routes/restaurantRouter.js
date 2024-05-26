@@ -8,7 +8,7 @@ router
   .post(restaurantController.createRestaurant)
   .put(restaurantController.updateRestaurant)
   .delete(restaurantController.deleteAllRestaurants);
-router.route("/:id").get(restaurantController.getRestaurant);
+router.route("/:id").get(restaurantController.getRestaurant).put(restaurantController.updateRestaurantMenu);
 
 router.route("/tables/:id").get(restaurantController.getRestaurantTables);
 

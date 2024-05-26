@@ -3,7 +3,14 @@ const Restaurant = require("../models/restaurantModel");
 const Table = require("../models/tableModel");
 
 const updateRestaurantCapacity = async (restaurantID) => {
-  const restaurant = await Restaurant.findById(restaurantID).populate("tableList");
+  const restaurant = await Restaurant.findById(restaurantID).populate({
+    path: "tableList",
+    populate: {
+      path: "orders.currentOrder",
+      match: { "orders.status": { $ne: "completed" } }
+    }
+  });
+
   if (!restaurant) {
     throw new Error("Restaurant not found");
   }
@@ -12,38 +19,67 @@ const updateRestaurantCapacity = async (restaurantID) => {
   let customerCount = 0;
 
   for (const table of restaurant.tableList) {
-    const activeOrders = await Table.findById(table._id).populate("orders.currentOrder").where("orders.status").ne("completed");
-    if (activeOrders.orders.length > 0) {
-      customerCount += activeOrders.orders.reduce((count, order) => count + (order.status !== "completed" ? 1 : 0), 0);
-    }
+    const activeOrders = table.orders.filter(order => order.status !== "completed");
+    customerCount += activeOrders.length;
   }
 
   restaurant.totalCapacity = totalCapacity;
   restaurant.customerCount = customerCount;
   await restaurant.save();
-  console.log("güncellenen restoran", restaurant);
+  console.log("Updated restaurant:", restaurant);
 };
 
 exports.getAllRestaurants = async (req, res) => {
   try {
-    const restaurants = await Restaurant.find().populate("tableList");
-    if (restaurants.length !== 0) {
-      for (const restaurant of restaurants) {
-        await updateRestaurantCapacity(restaurant._id);
+    const restaurants = await Restaurant.find().populate({
+      path: "tableList",
+      populate: {
+        path: "orders.currentOrder",
+        match: { "orders.status": { $ne: "completed" } }
       }
-      return res.status(200).json({
-        status: "success",
-        data: restaurants,
+    });
+
+    if (restaurants.length !== 0) {
+      await Promise.all(restaurants.map(restaurant => updateRestaurantCapacity(restaurant._id)));
+      return res.status(200).json({ status: "success", data: restaurants });
+    }
+
+    return res.status(404).json({ status: "failed", message: "No restaurant found" });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
+exports.updateRestaurantMenu = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { menu } = req.body;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(401).json({
+        status: "failed",
+        message: "Invalid restaurant ID",
       });
     }
-    return res.status(404).json({
-      status: "failed",
-      message: "No restaurant found",
+    const restaurant = await Restaurant.findById
+    (id).populate("menu");
+    if (!restaurant) {
+      return res.status(404).json({
+        status: "failed",
+        message: "Restaurant not found",
+      });
+    }
+    restaurant.menu = menu;
+    await restaurant.save();
+    res.status(200).json({
+      status: "success",
+      data: restaurant.menu,
+
     });
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
 };
+
 exports.getRestaurant = async (req, res) => {
   try {
     const { id } = req.params;
