@@ -98,7 +98,9 @@ exports.updateTempOrder = async (req, res) => {
     }
 
     if (req.body.orderedMeals.length === 0) {
-      await TempOrder.findByIdAndDelete(tempOrder._id);
+      tempOrder.orderedMeals = req.body.orderedMeals;
+      tempOrder.paidMeals = req.body.paidMeals;
+      await tempOrder.save();
       return res.status(400).json({
         message: "done",
       });
@@ -110,6 +112,18 @@ exports.updateTempOrder = async (req, res) => {
     return res.status(200).json({
       status: "success",
       data: tempOrder,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.deleteTempOrder = async (req, res) => {
+  try {
+    await TempOrder.findByIdAndDelete(req.params.id);
+    res.status(200).json({
+      status: "success",
+      message: "TempOrder deleted",
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

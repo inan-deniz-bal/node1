@@ -9,6 +9,7 @@ router
 router
   .route("/:id")
   .get(tempOrderController.getOneTempOrder)
-  .post(tempOrderController.updateTempOrder);
+  .post(tempOrderController.updateTempOrder)
+  .delete(tempOrderController.deleteTempOrder);
 
 module.exports = router;
