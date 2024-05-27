@@ -147,7 +147,22 @@ exports.getTableByQrCode = async (req, res) => {
     const currentOrder = await CurrentOrder.findOne({
       tableId: tableid,
     });
+    console.log("current ",currentOrder)
     if (!currentOrder) {
+      const restaurant = await Restaurant.findOne({
+        tableList: tableid,
+      });
+      console.log(restaurant);
+      return res.status(200).json({
+        status: "success",
+        data: {
+          restaurantName: restaurant.name,
+          menu: restaurant.menu,
+
+        },
+      });
+    }
+    if(CurrentOrder.status!="active" || CurrentOrder.status!="ready"){
       const restaurant = await Restaurant.findOne({
         tableList: tableid,
       });
