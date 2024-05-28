@@ -207,6 +207,11 @@ exports.updateOrder = async (req, res) => {
         .status(400)
         .json({ status: "failed", message: "Order is closed" });
     }
+    if (order.orderStatus === "canncel") {
+      return res
+        .status(400)
+        .json({ status: "failed", message: "Order is cancelled" });
+    }
     console.log(req.body);
     const updatedOrder = await CurrentOrder.findByIdAndUpdate(
       orderID,

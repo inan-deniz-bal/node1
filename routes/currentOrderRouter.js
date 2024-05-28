@@ -9,17 +9,15 @@ router
   .get(currentOrderController.allOrders)
   .delete(currentOrderController.deleteAllOrders);
 
-
-
-
 router.route("/customer/:id").get(currentOrderController.getCustomerOrders);
 router
   .route("/:orderID/:tableId")
   .get(currentOrderController.closeOrder)
-  .delete(currentOrderController.cancelOrder)
+  .delete(currentOrderController.cancelOrder);
+
+router
+  .route("/:id")
+  .get(currentOrderController.getCurrentOrder)
   .put(currentOrderController.updateOrder);
-
-
-router.route("/:id").get(currentOrderController.getCurrentOrder);
 
 module.exports = router;
